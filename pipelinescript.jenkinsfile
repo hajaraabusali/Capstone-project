@@ -1,0 +1,31 @@
+pipeline {
+  agent any  // Run on any available agent
+
+  stages {
+    stage('Checkout Code') {
+      steps {
+        git branch: 'main', credentialsId: 'bd2c368890874b8fa5bebafb0679c1f3', url: 'https://github.com/hajaraabusali/Capstone-project.git'
+      }
+    }
+    stage('Build') {
+      steps {
+        sh 'npm install'  // Replace with your build command (e.g., mvn clean install for Maven)
+      }
+    }
+    stage('Test') {
+      steps {
+        sh 'npm test'  // Replace with your test command
+      }
+    }
+    stage('Deploy (Optional)') {
+      when {
+        expression { return environment.promote == 'true' }  // Optional: Only deploy if 'promote' environment variable is set to 'true'
+      }
+      steps {
+        sh 'docker build -t your-image-name .'  // Build Docker image
+        sh 'docker push your-image-name:latest'  // Push to Docker registry (replace with your credentials)
+        // Additional deployment steps (e.g., connecting to servers, deploying using tools)
+      }
+    }
+  }
+}
